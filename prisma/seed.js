@@ -2,22 +2,6 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function seed() {
-  const createdCustomer = await prisma.customer.create({
-    data: {
-      name: "Alice",
-      contact: {
-        create: {
-          phone: "07770744444",
-          email: "me@me.com",
-        },
-      },
-    },
-    include: {
-      contact: true,
-    },
-  });
-
-  console.log("Customer created", createdCustomer);
 
   // Add your code here
 
@@ -39,6 +23,21 @@ async function seed() {
                   },
                 },
               },
+              tickets: {
+                  create: [ {
+                      customer : {
+                          create : {
+                            name: "Alice",
+                            contact: {
+                              create: {
+                                phone: "07770744444",
+                                email: "me@me.com",
+                              },
+                            },
+                          }
+                      }
+                  }]
+              }
             },
             {
               startsAt: new Date(2022, 02, 30, 21, 15),
@@ -60,6 +59,15 @@ async function seed() {
       screenings: {
           include: {
               screen: true,
+              tickets: {
+                  include : {
+                      customer : {
+                          include : {
+                              contact: true,
+                          }
+                      }
+                  }
+              }
           }
       } 
     },
